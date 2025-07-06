@@ -1,70 +1,70 @@
-# Jukebox Light - Modèle Léger OpenAI Jukebox
+# Jukebox Light - Lightweight OpenAI Jukebox Model
 
-Jukebox Light est une version allégée et modulaire du modèle OpenAI Jukebox, permettant de générer de la musique à partir de texte ou de prompts audio, avec des ressources matérielles réduites.  
-Ce projet vise à faciliter l’utilisation et l’expérimentation avec Jukebox, en réduisant la taille du modèle et les besoins en VRAM.
+Jukebox Light is a lightweight and modular version of the OpenAI Jukebox model, enabling music generation from text or audio prompts with reduced hardware resources.  
+This project aims to make it easier to use and experiment with Jukebox by reducing the model size and VRAM requirements.
 
-## Fonctionnalités
+## Features
 
-- Génération musicale à partir de textes ou d’audio courts
-- Modèle allégé (taille réduite, moins de paramètres)
-- Interface simple d’utilisation (CLI ou script Python)
-- Compatible CPU et GPU (CUDA conseillé pour de meilleures performances)
-- Possibilité d’entraîner sur vos propres datasets
+- Music generation from text or short audio prompts
+- Lightweight model (smaller size, fewer parameters)
+- Simple interface (CLI or Python script)
+- Compatible with CPU and GPU (CUDA recommended for better performance)
+- Ability to train on your own datasets
 
 ## Installation
 
-1. Clonez le dépôt :
+1. Clone the repository:
    ```bash
-   Télécharger ce dépo et extraire le .zip
+   Download this repo and extract the .zip
    cd Mini_Jukebox
    ```
 
-2. Installez les dépendances :
+2. Install the dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Télécharger les modèles sur hugging face [Mini Jukebox HF](https://huggingface.co/Leo71288/OpenAI_Mini-Jukebox) et déplacer les modèles dans Mini_Jukebox
+3. Download the models from Hugging Face [Mini Jukebox HF](https://huggingface.co/Leo71288/OpenAI_Mini-Jukebox) and move them into Mini_Jukebox
 
-## Utilisation
+## Usage
 
-### Génération de musique
+### Music Generation
 
-Exemple en ligne de commande :
+Command line example:
 ```bash
 python ./setup.py generate
 ```
 
-### Entraînement sur vos propres données
+### Training on Your Own Data
 
-1. Placez vos fichiers audio dans `./data/`
-2. Lancez l’entraînement :
+1. Place your audio files in `./data/`
+2. Start training:
    ```bash
    python ./setup.py train_vqvae
    python ./setup.py train_prior
    python ./setup.py extract_codes
    ```
 
-## Arborescence du projet pour générer
+## Project Structure for Generation
 
 ```
 V2 Mini Jukebox/
-├── setup.py      # Code .py
-├── prior.pth             # Modèle Prior
-├── vqvae.pth       # Modèle VQ-VAE
-├── codes_simple.pth          # Extraction des données audio d'entrainement
-├── requirements.txt  # Dépendances Python
+├── setup.py      # Python code
+├── prior.pth             # Prior model
+├── vqvae.pth       # VQ-VAE model
+├── codes_simple.pth          # Extracted training audio data
+├── requirements.txt  # Python dependencies
 └── README.md
 ```
 
-## Crédits
+## Credits
 
-- Basé sur [OpenAI Jukebox](https://github.com/openai/jukebox)
+- Based on [OpenAI Jukebox](https://github.com/openai/jukebox)
 
 ## License
 
-Ce projet est distribué sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus d’informations.
+This project is distributed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
 ---
 
-N’hésitez pas à ouvrir une issue pour toute question ou suggestion !
+Feel free to open an issue for any questions or suggestions!
