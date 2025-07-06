@@ -1,15 +1,3 @@
-{
-  "cells": [
-    {
-      "cell_type": "markdown",
-      "metadata": {
-        "id": "view-in-github",
-        "colab_type": "text"
-      },
-      "source": [
-        "<a href=\"https://colab.research.google.com/drive/1yaNAm3H4Gr4ZL7q2yDtgHPUZVgIfK91N?usp=sharing\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
-      ]
-    },
 # Jukebox Light - Lightweight OpenAI Jukebox Model
 
 Jukebox Light is a lightweight and modular version of the OpenAI Jukebox model, enabling music generation from text or audio prompts with reduced hardware resources.  
