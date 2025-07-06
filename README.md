@@ -11,6 +11,7 @@ This project aims to make it easier to use and experiment with Jukebox by reduci
 - Compatible with CPU and GPU (CUDA recommended for better performance)
 - Ability to train on your own datasets
 - Available on Google Colab: [Mini_Jukebox Notebook](https://colab.research.google.com/drive/1yaNAm3H4Gr4ZL7q2yDtgHPUZVgIfK91N?usp=sharing)
+- Available on Hugging Face: [Mini_Jukebox HF Spaces](https://huggingface.co/spaces/Leo71288/Mini_Jukebox)
 
 ## Installation
 
