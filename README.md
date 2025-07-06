@@ -24,7 +24,7 @@ Ce projet vise à faciliter l’utilisation et l’expérimentation avec Jukebox
    pip install -r requirements.txt
    ```
 
-3. Télécharger les modèles sur hugging face [Mini Jukebox HF] (https://huggingface.co/Leo71288/OpenAI_Mini-Jukebox) et déplacer les modèles dans Mini_Jukebox
+3. Télécharger les modèles sur hugging face [Mini Jukebox HF](https://huggingface.co/Leo71288/OpenAI_Mini-Jukebox) et déplacer les modèles dans Mini_Jukebox
 
 ## Utilisation
 
