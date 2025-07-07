@@ -3,7 +3,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchaudio
+import time
+import soundfile as sf 
+torchaudio.set_audio_backend("soundfile") 
 from torch.utils.data import Dataset, DataLoader
+
 
 # -------- Dataset --------
 class MusicDataset(Dataset):
@@ -101,7 +105,7 @@ class SimpleTransformer(nn.Module):
         self.embedding_dim = embedding_dim
         self.token_emb = nn.Embedding(num_tokens, embedding_dim)
         self.pos_emb = nn.Parameter(torch.zeros(1, max_len, embedding_dim))  # Position embedding fixed here
-        encoder_layer = nn.TransformerEncoderLayer(d_model=embedding_dim, nhead=n_heads)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=embedding_dim, nhead=n_heads, batch_first=True)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=n_layers)
         self.to_logits = nn.Linear(embedding_dim, num_tokens)
 
@@ -109,22 +113,44 @@ class SimpleTransformer(nn.Module):
         b, t = x.shape
         assert t <= self.pos_emb.size(1), "Sequence length exceeds max_len"
 
-        x = self.token_emb(x) + self.pos_emb[:, :t, :]  # add positional embedding
-        x = x.permute(1, 0, 2)  # (seq_len, batch, embedding_dim)
+        x = self.token_emb(x) + self.pos_emb[:, :t, :]
+        x = x.permute(1, 0, 2)
         x = self.transformer(x)
-        x = x.permute(1, 0, 2)  # back to (batch, seq_len, embedding_dim)
+        x = x.permute(1, 0, 2)
         logits = self.to_logits(x)
         return logits
 
     def generate(self, start_tokens, max_len=256):
         self.eval()
         tokens = start_tokens
-        for _ in range(max_len - tokens.size(1)):
-            logits = self.forward(tokens)
-            probs = torch.softmax(logits[:, -1, :], dim=-1)
+        start_time = time.perf_counter()
+        last_time  = start_time
+
+        for i in range(max_len - tokens.size(1)):
+            now          = time.perf_counter()
+            delta        = now - last_time
+            total_elapsed= now - start_time
+            if torch.cuda.is_available():
+                m_alloc = torch.cuda.memory_allocated() / 1024**2
+                m_res   = torch.cuda.memory_reserved()  / 1024**2
+                print(f"Token {tokens.size(1)+1}/{max_len} — Δ {delta:.4f}s, total {total_elapsed:.4f}s"
+                      f" — GPU alloc {m_alloc:.1f} Mo / reserved {m_res:.1f} Mo")
+            else:
+                print(f"Token {tokens.size(1)+1}/{max_len} — Δ {delta:.4f}s, total {total_elapsed:.4f}s")
+
+            last_time = now
+
+            logits     = self.forward(tokens)
+            probs      = torch.softmax(logits[:, -1, :], dim=-1)
             next_token = torch.multinomial(probs, 1)
-            tokens = torch.cat([tokens, next_token], dim=1)
+            tokens     = torch.cat([tokens, next_token], dim=1)
+            if torch.cuda.is_available() and ((i+1) % 10 == 0):
+                torch.cuda.empty_cache()
+
+        print("Génération terminée.")
         return tokens
+
+
 
 # -------- Training VQ-VAE --------
 def train_vqvae(device, epochs=10):
@@ -203,27 +229,45 @@ def train_prior_simple(device, epochs=5):
 
 # -------- Génération --------
 def generate_simple(device, max_len=30000):
+    import time
+    t_start = time.time()
+    
+    print("[1] Chargement du modèle prior...")
     vocab_size = 512
-    model_prior = SimpleTransformer(num_tokens=vocab_size, max_len=max_len).to(device)  # <-- préciser max_len ici
+    model_prior = SimpleTransformer(num_tokens=vocab_size, max_len=max_len).to(device)
     model_prior.load_state_dict(torch.load("./prior.pth", map_location=device))
     model_prior.eval()
-
-    start_tokens = torch.zeros((1, 1), dtype=torch.long).to(device)  # start from token 0
-
+    t1 = time.time()
+    print(f"  -> Temps chargement prior : {t1 - t_start:.2f}s")
+    
+    print("[2] Début de la génération de codes...")
+    start_tokens = torch.zeros((1, 1), dtype=torch.long).to(device)
     generated_codes = model_prior.generate(start_tokens, max_len=max_len).squeeze(0)
-
+    t2 = time.time()
+    print(f"  -> Temps génération tokens : {t2 - t1:.2f}s")
+    print(f"[2b] {generated_codes.shape[0]} tokens générés.")
+    
+    print("[3] Chargement du VQ-VAE...")
     vqvae = VQVAE().to(device)
     vqvae.load_state_dict(torch.load("./vqvae.pth", map_location=device))
     vqvae.eval()
-
+    t3 = time.time()
+    print(f"  -> Temps chargement VQ-VAE : {t3 - t2:.2f}s")
+    
+    print("[4] Reconstruction audio depuis les codes...")
     embeddings = vqvae.vq.embeddings.weight  # (num_embeddings, embedding_dim)
     quantized = embeddings[generated_codes].permute(1, 0).unsqueeze(0)  # (1, C, T)
     with torch.no_grad():
         audio = vqvae.decoder(quantized)
     audio = audio.squeeze().cpu()
+    t4 = time.time()
+    print(f"  -> Temps reconstruction audio : {t4 - t3:.2f}s")
+    
+    print("[5] Sauvegarde du fichier audio...")
     torchaudio.save("generated_simple.wav", audio.unsqueeze(0), 22050)
-    print("Audio généré sauvegardé dans generated_simple.wav")
-
+    t5 = time.time()
+    print(f"  -> Temps sauvegarde audio : {t5 - t4:.2f}s")
+    print("[✅] Audio généré sauvegardé dans generated_simple.wav")
 # -------- CLI simplifié --------
 if __name__ == "__main__":
     import sys
@@ -236,6 +280,15 @@ if __name__ == "__main__":
         extract_codes_simple(device)
     elif cmd == "train_prior":
         train_prior_simple(device)
+    elif cmd == "train":
+        print("Entraînement complet (VQ-VAE + extraction + prior)...")
+        print("Entraînement du VQ-VAE...")
+        train_vqvae(device)
+        print("Extraction des codes...")
+        extract_codes_simple(device)
+        print("Entraînement du prior...")
+        train_prior_simple(device)
+        print("done")
     elif cmd == "generate":
         generate_simple(device)
     else:

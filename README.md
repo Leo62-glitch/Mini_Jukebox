@@ -17,8 +17,11 @@ This project aims to make Jukebox easier to use and experiment with by reducing 
 
 1. Clone the repository:
    ```bash
-   # Download this repo and extract the .zip or use git clone
+   git clone https://github.com/Leo62-glitch/Mini_Jukebox.git
    cd Mini_Jukebox
+   git lfs install
+   git lfs fetch
+   git lfs checkout
    ```
 
 2. Install the dependencies:
@@ -37,12 +40,10 @@ python ./setup.py generate
 
 ### Training on Your Own Data
 
-1. Place your audio files in `./data/`
+1. Place your audio files in `./data/` in wav format
 2. Start training:
    ```bash
-   python ./setup.py train_vqvae
-   python ./setup.py extract_codes
-   python ./setup.py train_prior
+   python ./setup.py train
    ```
 
 ## Project Structure for Generation
