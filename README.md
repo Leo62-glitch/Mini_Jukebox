@@ -25,9 +25,7 @@ This project aims to make it easier to use and experiment with Jukebox by reduci
    ```bash
    pip install -r requirements.txt
    ```
-
-3. Download the models from Hugging Face [Mini Jukebox HF](https://huggingface.co/Leo71288/OpenAI_Mini-Jukebox) and move them into Mini_Jukebox
-
+   
 ## Usage
 
 ### Music Generation
