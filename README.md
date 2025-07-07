@@ -40,9 +40,9 @@ python ./setup.py generate
 1. Place your audio files in `./data/`
 2. Start training:
    ```bash
-   python ./setup.py train_vqvae
-   python ./setup.py train_prior
-   python ./setup.py extract_codes
+python ./setup.py train_vqvae
+python ./setup.py extract_codes
+python ./setup.py train_prior
    ```
 
 ## Project Structure for Generation
