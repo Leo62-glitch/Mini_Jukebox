@@ -1,11 +1,11 @@
 # Jukebox Light - Lightweight OpenAI Jukebox Model
 
-Jukebox Light is a lightweight and modular version of the OpenAI Jukebox model, enabling music generation from text or audio prompts with reduced hardware resources.  
-This project aims to make it easier to use and experiment with Jukebox by reducing the model size and VRAM requirements.
+Jukebox Light is a lightweight and modular version of the OpenAI Jukebox model, enabling music generation from text or audio prompts with reduced hardware requirements.  
+This project aims to make Jukebox easier to use and experiment with by reducing the model size and VRAM consumption.
 
 ## Features
 
-- Music generation from text or short audio prompts
+- Generate music from text or short audio prompts
 - Lightweight model (smaller size, fewer parameters)
 - Simple interface (CLI or Python script)
 - Compatible with CPU and GPU (CUDA recommended for better performance)
@@ -17,7 +17,7 @@ This project aims to make it easier to use and experiment with Jukebox by reduci
 
 1. Clone the repository:
    ```bash
-   Download this repo and extract the .zip
+   # Download this repo and extract the .zip or use git clone
    cd Mini_Jukebox
    ```
 
@@ -39,19 +39,21 @@ python ./setup.py generate
 
 1. Place your audio files in `./data/`
 2. Start training:
-   ```bash python ./setup.py train_vqvae
-python ./setup.py extract_codes
-python ./setup.py train_prior```
+   ```bash
+   python ./setup.py train_vqvae
+   python ./setup.py extract_codes
+   python ./setup.py train_prior
+   ```
 
 ## Project Structure for Generation
 
 ```
-V2 Mini Jukebox/
-├── setup.py      # Python code
-├── prior.pth             # Prior model
-├── vqvae.pth       # VQ-VAE model
-├── codes_simple.pth          # Extracted training audio data
-├── requirements.txt  # Python dependencies
+V2 Mini_Jukebox/
+├── setup.py             # Python entry point
+├── prior.pth            # Prior model
+├── vqvae.pth            # VQ-VAE model
+├── codes_simple.pth     # Extracted training audio data
+├── requirements.txt     # Python dependencies
 └── README.md
 ```
 
