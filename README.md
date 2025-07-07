@@ -42,8 +42,7 @@ python ./setup.py generate
    ```bash
 python ./setup.py train_vqvae
 python ./setup.py extract_codes
-python ./setup.py train_prior
-   ```
+python ./setup.py train_prior```
 
 ## Project Structure for Generation
 
